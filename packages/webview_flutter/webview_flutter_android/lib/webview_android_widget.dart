@@ -702,7 +702,8 @@ class WebViewAndroidWebChromeClient extends android_webview.WebChromeClient {
   }
 
   @override
-  Future<List<String>> onShowFileChooser(android_webview.WebView webView) async {
+  Future<List<String>> onShowFileChooser(
+      android_webview.WebView webView) async {
     if (_onShowFileChooser != null) {
       return await _onShowFileChooser!();
     }
