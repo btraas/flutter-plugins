@@ -851,24 +851,24 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     return Future<List<String>>.value(const <String>[]);
   }
 
-  @override
-  Future<List<String>> onShowFileChooser(
-      int instanceId, int webViewInstanceId) async {
-    final WebChromeClient? instance =
-        instanceManager.getInstance(instanceId) as WebChromeClient?;
-    final WebView? webViewInstance =
-        instanceManager.getInstance(webViewInstanceId) as WebView?;
-    assert(
-      instance != null,
-      'InstanceManager does not contain an WebChromeClient with instanceId: $instanceId',
-    );
-    assert(
-      webViewInstance != null,
-      'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
-    );
-    // AFAIRE
-    return await instance!.onShowFileChooser(webViewInstance!);
-  }
+  // @override
+  // Future<List<String>> onShowFileChooser(
+  //     int instanceId, int webViewInstanceId) async {
+  //   final WebChromeClient? instance =
+  //       instanceManager.getInstance(instanceId) as WebChromeClient?;
+  //   final WebView? webViewInstance =
+  //       instanceManager.getInstance(webViewInstanceId) as WebView?;
+  //   assert(
+  //     instance != null,
+  //     'InstanceManager does not contain an WebChromeClient with instanceId: $instanceId',
+  //   );
+  //   assert(
+  //     webViewInstance != null,
+  //     'InstanceManager does not contain an WebView with instanceId: $webViewInstanceId',
+  //   );
+  //   // AFAIRE
+  //   return await instance!.onShowFileChooser(webViewInstance!);
+  // }
 }
 
 /// Host api implementation for [WebStorage].
