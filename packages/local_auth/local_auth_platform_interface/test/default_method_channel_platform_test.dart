@@ -2,15 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_platform_interface/default_method_channel_platform.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
-import 'package:local_auth_platform_interface/types/auth_messages.dart';
-import 'package:local_auth_platform_interface/types/auth_options.dart';
-import 'package:local_auth_platform_interface/types/biometric_type.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +14,12 @@ void main() {
     'plugins.flutter.io/local_auth',
   );
 
-  final List<MethodCall> log = <MethodCall>[];
+  late List<MethodCall> log;
   late LocalAuthPlatform localAuthentication;
+
+  setUp(() async {
+    log = <MethodCall>[];
+  });
 
   test(
       'DefaultLocalAuthPlatform is registered as the default platform implementation',
@@ -30,13 +29,39 @@ void main() {
   });
 
   test('getAvailableBiometrics', () async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) {
+    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+        .defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) {
       log.add(methodCall);
-      return Future<dynamic>.value(<BiometricType>[]);
+      return Future<dynamic>.value(<String>[]);
     });
     localAuthentication = DefaultLocalAuthPlatform();
-    log.clear();
     await localAuthentication.getEnrolledBiometrics();
+    expect(
+      log,
+      <Matcher>[
+        isMethodCall('getAvailableBiometrics', arguments: null),
+      ],
+    );
+  });
+
+  test('deviceSupportsBiometrics handles special sentinal value', () async {
+    // The pre-federation implementation of the platform channels, which the
+    // default implementation retains compatibility with for the benefit of any
+    // existing unendorsed implementations, used 'undefined' as a special
+    // return value from `getAvailableBiometrics` to indicate that nothing was
+    // enrolled, but that the hardware does support biometrics.
+    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+        .defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) {
+      log.add(methodCall);
+      return Future<dynamic>.value(<String>['undefined']);
+    });
+
+    localAuthentication = DefaultLocalAuthPlatform();
+    final bool supportsBiometrics =
+        await localAuthentication.deviceSupportsBiometrics();
+    expect(supportsBiometrics, true);
     expect(
       log,
       <Matcher>[
@@ -47,12 +72,13 @@ void main() {
 
   group('Boolean returning methods', () {
     setUp(() {
-      channel.setMockMethodCallHandler((MethodCall methodCall) {
+      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
+          .defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) {
         log.add(methodCall);
         return Future<dynamic>.value(true);
       });
       localAuthentication = DefaultLocalAuthPlatform();
-      log.clear();
     });
 
     test('isDeviceSupported', () async {
@@ -178,3 +204,9 @@ void main() {
     });
   });
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+T? _ambiguate<T>(T? value) => value;

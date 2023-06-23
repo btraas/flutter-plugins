@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:quiver/core.dart';
 
 class FakeController extends ValueNotifier<CameraValue>
     implements CameraController {
@@ -100,7 +97,8 @@ class FakeController extends ValueNotifier<CameraValue>
   Future<void> startImageStream(onLatestImageAvailable onAvailable) async {}
 
   @override
-  Future<void> startVideoRecording() async {}
+  Future<void> startVideoRecording(
+      {onLatestImageAvailable? onAvailable}) async {}
 
   @override
   Future<void> stopImageStream() async {}
@@ -203,7 +201,6 @@ void main() {
       controller.value = controller.value.copyWith(
         isInitialized: true,
         deviceOrientation: DeviceOrientation.portraitUp,
-        lockedCaptureOrientation: null,
         recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
             DeviceOrientation.landscapeLeft),
         previewSize: const Size(480, 640),

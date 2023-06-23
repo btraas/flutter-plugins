@@ -14,6 +14,8 @@
   if (@available(iOS 11, *)) {
     return [info objectForKey:UIImagePickerControllerPHAsset];
   }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   NSURL *referenceURL = [info objectForKey:UIImagePickerControllerReferenceURL];
   if (!referenceURL) {
     return nil;
@@ -21,6 +23,7 @@
   PHFetchResult<PHAsset *> *result = [PHAsset fetchAssetsWithALAssetURLs:@[ referenceURL ]
                                                                  options:nil];
   return result.firstObject;
+#pragma clang diagnostic pop
 }
 
 + (PHAsset *)getAssetFromPHPickerResult:(PHPickerResult *)result API_AVAILABLE(ios(14)) {
@@ -100,7 +103,7 @@
                             gifInfo:(GIFInfo *)gifInfo
                                path:(NSString *)path {
   CGImageDestinationRef destination = CGImageDestinationCreateWithURL(
-      (CFURLRef)[NSURL fileURLWithPath:path], kUTTypeGIF, gifInfo.images.count, NULL);
+      (__bridge CFURLRef)[NSURL fileURLWithPath:path], kUTTypeGIF, gifInfo.images.count, NULL);
 
   NSDictionary *frameProperties = @{
     (__bridge NSString *)kCGImagePropertyGIFDictionary : @{
@@ -117,11 +120,12 @@
 
   gifProperties[(__bridge NSString *)kCGImagePropertyGIFLoopCount] = @0;
 
-  CGImageDestinationSetProperties(destination, (CFDictionaryRef)gifMetaProperties);
+  CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)gifMetaProperties);
 
   for (NSInteger index = 0; index < gifInfo.images.count; index++) {
     UIImage *image = (UIImage *)[gifInfo.images objectAtIndex:index];
-    CGImageDestinationAddImage(destination, image.CGImage, (CFDictionaryRef)frameProperties);
+    CGImageDestinationAddImage(destination, image.CGImage,
+                               (__bridge CFDictionaryRef)frameProperties);
   }
 
   CGImageDestinationFinalize(destination);

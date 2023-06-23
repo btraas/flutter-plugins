@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart'
     show SynchronousFuture, describeIdentity, immutable, objectRuntimeType;
-import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
@@ -63,9 +61,11 @@ class _FutureMemoryImage extends ImageProvider<_FutureMemoryImage> {
     return SynchronousFuture<_FutureMemoryImage>(this);
   }
 
-  /// See [ImageProvider.load].
   @override
-  ImageStreamCompleter load(_FutureMemoryImage key, DecoderCallback decode) {
+  ImageStreamCompleter loadBuffer(
+    _FutureMemoryImage key,
+    DecoderBufferCallback decode, // ignore: deprecated_member_use
+  ) {
     return _FutureImageStreamCompleter(
       codec: _loadAsync(key, decode),
       futureScale: _futureScale,
@@ -74,12 +74,10 @@ class _FutureMemoryImage extends ImageProvider<_FutureMemoryImage> {
 
   Future<ui.Codec> _loadAsync(
     _FutureMemoryImage key,
-    DecoderCallback decode,
-  ) async {
+    DecoderBufferCallback decode, // ignore: deprecated_member_use
+  ) {
     assert(key == this);
-    return _futureBytes.then((Uint8List bytes) {
-      return decode(bytes);
-    });
+    return _futureBytes.then(ui.ImmutableBuffer.fromUint8List).then(decode);
   }
 
   /// See [ImageProvider.operator==].
@@ -95,7 +93,7 @@ class _FutureMemoryImage extends ImageProvider<_FutureMemoryImage> {
 
   /// See [ImageProvider.hashCode].
   @override
-  int get hashCode => hashValues(_futureBytes.hashCode, _futureScale);
+  int get hashCode => Object.hash(_futureBytes.hashCode, _futureScale);
 
   /// See [ImageProvider.toString].
   @override

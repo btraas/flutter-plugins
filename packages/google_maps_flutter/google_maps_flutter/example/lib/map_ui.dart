@@ -16,7 +16,8 @@ final LatLngBounds sydneyBounds = LatLngBounds(
 );
 
 class MapUiPage extends GoogleMapExampleAppPage {
-  const MapUiPage() : super(const Icon(Icons.map), 'User interface');
+  const MapUiPage({Key? key})
+      : super(const Icon(Icons.map), 'User interface', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class MapUiPage extends GoogleMapExampleAppPage {
 }
 
 class MapUiBody extends StatefulWidget {
-  const MapUiBody();
+  const MapUiBody({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => MapUiBodyState();
@@ -239,7 +240,7 @@ class MapUiBodyState extends State<MapUiBody> {
   }
 
   Future<String> _getFileData(String path) async {
-    return await rootBundle.loadString(path);
+    return rootBundle.loadString(path);
   }
 
   void _setMapStyle(String mapStyle) {
@@ -335,7 +336,6 @@ class MapUiBodyState extends State<MapUiBody> {
       );
     }
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: columnChildren,
     );
