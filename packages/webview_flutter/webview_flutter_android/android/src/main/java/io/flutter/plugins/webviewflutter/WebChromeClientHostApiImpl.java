@@ -64,9 +64,11 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
                   public void reply(List<String> paths) {
                     final Uri[] uris = new Uri[paths.size()];
                     for (int i = 0; i < uris.length; i++) {
-                      System.out.println("Parsing URI from path: " + paths.get(i)));
-                      uris[i] = Uri.parse(paths.get(i));
-                      System.out.println("Parsed URI: " + uris[i].toString());
+                      System.out.println("Parsing URI from path: " + paths.get(i));
+                      Log.d("WCCHAI", "Parsing URI from path: " + paths.get(i));
+                      uris[i] = Uri.fromFile(new File(paths.get(i)));
+                      System.out.println("Parsed URI (via File API): " + uris[i].toString());
+                      Log.d("WCCHAI", "Parsed URI (via File API): " + uris[i].toString());
                     }
                     filePathCallback.onReceiveValue(uris);
                   }
