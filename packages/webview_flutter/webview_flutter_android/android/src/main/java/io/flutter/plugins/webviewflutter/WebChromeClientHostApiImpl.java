@@ -176,9 +176,9 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
      */
     public WebChromeClientImpl createWebChromeClient(WebChromeClientFlutterApiImpl flutterApi) {
       if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        return new WebViewClientImpl(flutterApi, shouldOverrideUrlLoading);
+        return new WebViewClientImpl(flutterApi);
       } else {
-        return new WebViewClientCompatImpl(flutterApi, shouldOverrideUrlLoading);
+        return new WebViewClientCompatImpl(flutterApi);
       }
     }
   }
