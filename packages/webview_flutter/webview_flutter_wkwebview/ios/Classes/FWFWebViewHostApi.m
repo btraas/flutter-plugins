@@ -21,7 +21,7 @@
     _objectApi = [[FWFObjectFlutterApiImpl alloc] initWithBinaryMessenger:binaryMessenger
                                                           instanceManager:instanceManager];
     if (@available(iOS 11.0, *)) {
-      self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+      self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentAlways;
       if (@available(iOS 13.0, *)) {
         self.scrollView.automaticallyAdjustsScrollIndicatorInsets = NO;
       }

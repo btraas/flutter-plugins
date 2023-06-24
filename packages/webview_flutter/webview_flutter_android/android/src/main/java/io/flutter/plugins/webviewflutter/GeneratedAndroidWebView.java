@@ -2638,7 +2638,6 @@ public class GeneratedAndroidWebView {
               "dev.flutter.pigeon.WebChromeClientFlutterApi.onShowFileChooser",
               getCodec());
       channel.send(
-
           new ArrayList<Object>(
               Arrays.asList(instanceIdArg, webViewInstanceIdArg, paramsInstanceIdArg)),
           channelReply -> {
